@@ -17,7 +17,7 @@
 
 /*
  * //////////////////////////////////////////////////////////////////////////
- *						USART Definitions
+ *							USART Definitions
  * //////////////////////////////////////////////////////////////////////////
  */ 
 
@@ -39,18 +39,14 @@
 
 /*
  * //////////////////////////////////////////////////////////////////////////
- *						USART Functions
+ *							USART Functions
  * //////////////////////////////////////////////////////////////////////////
  */ 
-static inline void set_baud_prescaler(uint32_t cpu_speed, uint32_t baud_rate, uint8_t double_speed);
-static inline void set_tx_speed(uint8_t double_speed);
-static inline void enable_tx_rx();
-static inline void set_frame_format();
 void init_usart(uint32_t cpu_speed, uint32_t baud_rate, uint8_t double_speed);
 
 /* RX and TX Functions */
-static inline void tx_byte(uint8_t data);
-static inline uint8_t rx_byte();
+void tx_byte(uint8_t data);
+uint8_t rx_byte();
 void print_byte(uint8_t number);
 void put_string(const char *str);
 void get_string(char *str, uint8_t size);

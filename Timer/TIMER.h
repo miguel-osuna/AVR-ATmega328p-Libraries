@@ -8,7 +8,7 @@
 #ifndef _TIMER_H_
 #define _TIMER_H_
 
-#ifndef __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -100,11 +100,6 @@ extern "C" {
  * //////////////////////////////////////////////////////////////////////////
  */ 
 void (*gp_timer1_func)(); // Global Function Pointer
-static inline void set_timer1_prescaler(uint16_t prescaler);
-static inline void set_timer1_waveform(uint8_t waveform);
-static inline void set_timer1_compare(uint8_t mode);
-static inline void set_timer1_ticks(uint16_t prescaler, uint16_t msec);
-static inline void set_timer1_interrupt(uint8_t interrupt);
 void init_timer1(uint8_t waveform_mode, uint16_t msec, uint8_t compare_mode, uint16_t prescaler, uint8_t interrupt, void (*f)() );
 uint16_t value_timer1();
 void clear_timer1();
@@ -118,11 +113,6 @@ uint8_t check_timer1_overflow();
  * //////////////////////////////////////////////////////////////////////////
  */ 
 void (*gp_timer0_func)(); // Global Function Pointer
-static inline void set_timer0_prescaler(uint16_t prescaler);
-static inline void set_timer0_waveform(uint8_t waveform);
-static inline void set_timer0_compare(uint8_t mode);
-static inline void set_timer0_ticks(uint16_t prescaler, uint8_t msec);
-static inline void set_timer0_interrupt(uint8_t interrupt);
 void init_timer0(uint8_t waveform_mode, uint8_t msec, uint8_t compare_mode, uint16_t prescaler, uint8_t interrupt, void (*f)() );
 uint8_t value_timer0();
 void clear_timer0();
@@ -136,11 +126,6 @@ uint8_t check_timer0_overflow();
  * //////////////////////////////////////////////////////////////////////////
  */ 
 void (*gp_timer2_func)(); // Global Function Pointer
-static inline void set_timer2_prescaler(uint16_t prescaler);
-static inline void set_timer2_waveform(uint8_t waveform);
-static inline void set_timer2_compare(uint8_t mode);
-static inline void set_timer2_ticks(uint16_t prescaler, uint8_t msec);
-static inline void set_timer2_interrupt(uint8_t interrupt);
 void init_timer2(uint8_t waveform_mode, uint8_t msec, uint8_t compare_mode, uint16_t prescaler, uint8_t interrupt, void (*f)() );
 uint8_t value_timer2();
 void clear_timer2();

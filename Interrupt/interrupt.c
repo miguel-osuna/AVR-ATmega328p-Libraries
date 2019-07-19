@@ -8,7 +8,7 @@
 
 /*
  * //////////////////////////////////////////////////////////////////////////
- *						Interrupt Functions
+ *							Interrupt Functions
  * //////////////////////////////////////////////////////////////////////////
  */ 
 
@@ -62,21 +62,21 @@ void enable_pcie(uint8_t port, uint8_t interrupt_pin)
 	switch(port)
 	{
 		// Mask Register 0
-		case PORT_B:
+		case PIN_CHANGE_INTERRUPT_0:
 			PCMSK0 |= (1 << interrupt_pin);
 			break;
 
 		// Mask Register 1
-		case PORT_C:
+		case PIN_CHANGE_INTERRUPT_1:
 			PCMSK1 |= (1 << interrupt_pin);
 			break;
 
 		// Mask Register 2
-		case PORT_D:
+		case PIN_CHANGE_INTERRUPT_2:
 			PCMSK2 |= (1 << interrupt_pin);
 			break;
 
-		// Set PORT_B as default
+		// Set PIN_CHANGE_INTERRUPT_0 as default
 		default:
 			PCMSK0 |= (1 << interrupt_pin);
 			break;

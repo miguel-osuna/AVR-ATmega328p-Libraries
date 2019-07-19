@@ -8,22 +8,22 @@
 
 /*
  * //////////////////////////////////////////////////////////////////////////
- *						USART Functions
+ *								USART Functions
  * //////////////////////////////////////////////////////////////////////////
  */ 
 
 /* Set USART Baud Prescaler */
-static inline void set_baud_prescaler(uint32_t cpu_speed, uint32_t baud_rate, uint8_t double_speed)
+static void set_baud_prescaler(uint32_t cpu_speed, uint32_t baud_rate, uint8_t double_speed)
 {
 	// If baud_rate is off the limits
-	if(baud_rate <= BAUD_RATE_2400 || baud_rate >= BAUD_RATE_2M)
+	if(baud_rate <= USART_BAUD_RATE_2400 || baud_rate >= USART_BAUD_RATE_2M)
 		baud_rate = 9600;
 	
 	uint16_t baud_prescaler;
 	
 	// For Asynchronous Double Normal Mode
 	if(double_speed)
-		set_frame_format = (cpu_speed) / (8 * baud_rate) - 1;
+		baud_prescaler = (cpu_speed) / (8 * baud_rate) - 1;
 		
 	// For Asynchronous Normal Mode
 	else
@@ -35,7 +35,7 @@ static inline void set_baud_prescaler(uint32_t cpu_speed, uint32_t baud_rate, ui
 }
 
 /* Set Transmission Speed */
-static inline void set_tx_speed(uint8_t double_speed)
+static void set_tx_speed(uint8_t double_speed)
 {
 	if(double_speed)
 		// USART Control Status Register 0 A
@@ -48,14 +48,14 @@ static inline void set_tx_speed(uint8_t double_speed)
 }
 
 /* Enable USART Transmitter and Receiver */
-static inline void enable_tx_rx()
+static void enable_tx_rx()
 {
 	// (UCSR0B): USART Control Status Register 0 B
 	UCSR0B |= ((1 << TXEN0) | (1 << RXEN0));
 }
 
 /* Set Frame Format */
-static inline void set_frame_format()
+static void set_frame_format()
 {
 	// Configure 8 Data Bits and 1 Stop Bit -> 011
 	// (UCSR0C): USART Control Status Register 0 C
@@ -86,7 +86,7 @@ void init_usart(uint32_t cpu_speed, uint32_t baud_rate, uint8_t double_speed)
 }
 
 /* Transmit Byte */
-static inline void tx_byte(uint8_t data)
+void tx_byte(uint8_t data)
 {
 	// Wait for empty transmit buffer 
 	// (UDRE0): USART Data Register Empty 0 
@@ -100,7 +100,7 @@ static inline void tx_byte(uint8_t data)
 }
 
 /* Receive Byte */
-static inline uint8_t rx_byte()
+uint8_t rx_byte()
 {
 	/* Wait for incoming data
 	 * (UCSR0A): USART Control Status Register 0 A 
@@ -146,7 +146,7 @@ void get_string(char *str, uint8_t size)
 			*(str + i) = key_num;
 			i++;
 		}
-	} while (c != 13 && i < size);
+	} while (key_num != 13 && i < size);
 	
 	*(str + i) = '\0';
 }

@@ -5,7 +5,6 @@
  * Author: Miguel Osuna
  */ 
 #include "timer.h"
-
 /*
  * //////////////////////////////////////////////////////////////////////////
  *						Timer/Counter 1 Functions
@@ -143,7 +142,7 @@ static inline void set_timer1_interrupt(uint8_t interrupt)
 			
 		// (ICIE): Input Capture Interrupt Enable 1
 		case WAVEFORM_CTC_ICR1:
-			TIMSK1 |= set_timer0_waveform (1 << ICIE1);
+			TIMSK1 |= (1 << ICIE1);
 			break;
 
 		default:
@@ -164,7 +163,7 @@ void init_timer1(uint8_t waveform_mode, uint16_t msec, uint8_t compare_mode, uin
 		set_timer1_ticks(prescaler, msec);	
 	
 	// Set Timer 1 Compare Output Mode
-	set_timer1_compare(compareMode);
+	set_timer1_compare(compare_mode);
 
 	// Configure Interrupt Mode if Enabled
 	if(interrupt)
