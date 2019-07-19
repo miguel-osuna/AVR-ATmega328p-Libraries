@@ -5,23 +5,33 @@
  * Author : Miguel Osuna
  */ 
 
+#ifndef F_CPU
 #define F_CPU 16000000UL
-#define DEBOUNCE_TIME 1000 // Time in microseconds
-
-/* Push-button Registers */
-#define BUTTON_DDR DDRB
-#define BUTTON_PORT PORTB
-#define BUTTON_PIN PINB
-#define BUTTON PB0
-
-/* LED Registers */
-#define LED_DDR DDRB
-#define LED_PORT PORTB
-#define LED PB5
+#endif 
 
 #include <avr/io.h>
 #include <util/delay.h>
 
+/*
+ * //////////////////////////////////////////////////////////////////////////
+ *						Debounce Definitions
+ * //////////////////////////////////////////////////////////////////////////
+ */ 
+#define BUTTON_DDR DDRB
+#define BUTTON_PORT PORTB
+#define BUTTON_PIN PINB
+#define BUTTON PB0
+#define LED_DDR DDRB
+#define LED_PORT PORTB
+#define LED PB5
+#define DEBOUNCE_TIME 1000 // Time in microseconds
+
+
+/*
+ * //////////////////////////////////////////////////////////////////////////
+ *						Debounce Functions
+ * //////////////////////////////////////////////////////////////////////////
+ */ 
 uint8_t debounce()
 {
 	/* If push-button is pressed */
@@ -41,24 +51,23 @@ int main(void)
     /* ----- Inits ----- */
 	LED_DDR |= (1 << LED); // On-board LED as Output
 	BUTTON_DDR &= ~(1 << PB1); // Push-button as Input
-	
 	BUTTON_PORT |= (1 << BUTTON); // Configure as Pull-up Resistor
 	
-	uint8_t buttonPressed = 0;
+	uint8_t button_pressed = 0;
 	
     while (1) 
     {
 		/* If push-button is pressed, toggle LED */
 		if(debounce())
 		{
-			if(!buttonPressed)
+			if(!button_pressed)
 			{
 				LED_PORT ^= (1 << LED);
-				buttonPressed = 1;
+				button_pressed = 1;
 			}
 		}
 		else
-			buttonPressed = 0;
+			button_pressed = 0;
 	}
 	return 0;
 }

@@ -1,94 +1,100 @@
 /*
- * USART.c
+ * usart.c
  * Created: 6/14/2019
  * Author: Miguel Osuna
  */
 
-#include "USART.h"
+#include "usart.h"
 
-void setBaudPrescaler(uint32_t cpuSpeed, uint32_t baudRate, uint8_t doubleSpeed)
+/* Set USART Baud Prescaler */
+static inline void set_baud_prescaler(uint32_t cpu_speed, uint32_t baud_rate, uint8_t double_speed)
 {
-	/* If baudRate is off the limits */
-	if(baudRate <= BAUD_RATE_2400 || baudRate >= BAUD_RATE_2M)
-		baudRate = 9600;
+	// If baud_rate is off the limits
+	if(baud_rate <= BAUD_RATE_2400 || baud_rate >= BAUD_RATE_2M)
+		baud_rate = 9600;
 	
-	uint16_t baudPrescaler;
+	uint16_t baud_prescaler;
 	
-	/* For Asynchronous Double Normal Mode */
-	if(doubleSpeed)
-		baudPrescaler = (cpuSpeed) / (8 * baudRate) - 1;
+	// For Asynchronous Double Normal Mode
+	if(double_speed)
+		set_frame_format = (cpu_speed) / (8 * baud_rate) - 1;
 		
-	/* For Asynchronous Normal Mode */
+	// For Asynchronous Normal Mode
 	else
-		baudPrescaler = (cpuSpeed) / (16 * baudRate) - 1;
+		baud_prescaler = (cpu_speed) / (16 * baud_rate) - 1;
 
-	/* USART Baud Rate Register Configuration */
-	UBRR0H = (uint8_t) (baudPrescaler >> 8); // 8 first MSB
-	UBRR0L = (uint8_t) (baudPrescaler >> 0); // 8 first LSB
+	// USART Baud Rate Register Configuration
+	UBRR0H = (uint8_t) (baud_prescaler >> 8); // 8 first MSB
+	UBRR0L = (uint8_t) (baud_prescaler >> 0); // 8 first LSB
 }
 
-void setTransmissionSpeed(uint8_t doubleSpeed)
+/* Set Transmission Speed */
+static inline void set_tx_speed(uint8_t double_speed)
 {
-	if(doubleSpeed)
-		/* USART Control Status Register 0 A
-		*  Writing '1' to U2X0 Doubles the USART Transmission Speed */
+	if(double_speed)
+		// USART Control Status Register 0 A
+		// Writing '1' to U2X0 Doubles the USART Transmission Speed
 		UCSR0A |= (1 << U2X0);
 	
 	else
-		/* Writing '0' to U2X0 will use synchronous operation */
+		// Writing '0' to U2X0 will use synchronous operation
 		UCSR0A &= ~(1 << U2X0);
 }
 
-void enableTxRx()
+/* Enable USART Transmitter and Receiver */
+static inline void enable_tx_rx()
 {
-	/* Enable USART Transmitter and Receiver
-	 * (UCSR0B): USART Control Status Register 0 B */ 
+	// (UCSR0B): USART Control Status Register 0 B
 	UCSR0B |= ((1 << TXEN0) | (1 << RXEN0));
 }
 
-void setFrameFormat()
+/* Set Frame Format */
+static inline void set_frame_format()
 {
-	/* Configure 8 Data Bits and 1 Stop Bit -> 011
-	 * (UCSR0C): USART Control Status Register 0 C */
+	// Configure 8 Data Bits and 1 Stop Bit -> 011
+	// (UCSR0C): USART Control Status Register 0 C
 
-	/* (USBS0): USART Stop Bit Select 0
-	 * Configure to 1 stop bit */
+	// (USBS0): USART Stop Bit Select 0
+	// Configure to 1 stop bit
 	UCSR0C &= ~(1 << USBS0);
 	
-	/* (UCSZ01): USART Character Size
-	 * Configure to 8 data bits -> 011 */
+	// (UCSZ01): USART Character Size
+	// Configure to 8 data bits -> 011
 	UCSR0C |= ((1 << UCSZ00) | (1 << UCSZ00));
 }
 
-void initUSART(uint32_t cpuSpeed, uint32_t baudRate, uint8_t doubleSpeed)
+/* Initialize USART Configuration */
+void init_usart(uint32_t cpu_speed, uint32_t baud_rate, uint8_t double_speed)
 {
-	/* Sets Prescaler value to (UBRR0): USART Baud Rate Register 0 */
-	setBaudPrescaler(cpuSpeed, baudRate, doubleSpeed);
+	// Sets Prescaler value to (UBRR0): USART Baud Rate Register 0
+	set_baud_prescaler(cpu_speed, baud_rate, double_speed);
 	
-	/* Sets USART Transmission Speed: x1 or x2 */
-	setTransmissionSpeed(doubleSpeed);
+	// Sets USART Transmission Speed: x1 or x2
+	set_tx_speed(double_speed);
 	
-	/* Enables USART Transmitter and USART Receiver */
-	enableTxRx();
+	// Enables USART Transmitter and USART Receiver
+	enable_tx_rx();
 	
-	/* Configuration of 8 data bits and 1 stop bit */
-	setFrameFormat();
+	// Configuration of 8 data bits and 1 stop bit
+	set_frame_format();
 }
 
-void transmitByte(uint8_t data)
+/* Transmit Byte */
+static inline void tx_byte(uint8_t data)
 {
-	/* Wait for empty transmit buffer 
-	 * (UDRE0): USART Data Register Empty 0 
-	 * (UCSR0A): USART Control Status Register 0 A */ 
+	// Wait for empty transmit buffer 
+	// (UDRE0): USART Data Register Empty 0 
+	// (UCSR0A): USART Control Status Register 0 A
 	while(!(UCSR0A & (1 << UDRE0)));
 	
-	/* The data is mounted into the
-	 * (UDR0): USART Data Register 0
-	 * UDR0 is a buffer for both TX0 and RX0 */
+	// The data is mounted into the
+	// (UDR0): USART Data Register 0
+	// UDR0 is a buffer for both TX0 and RX0
 	UDR0 = data;
 }
 
-uint8_t receiveByte()
+/* Receive Byte */
+static inline uint8_t rx_byte()
 {
 	/* Wait for incoming data
 	 * (UCSR0A): USART Control Status Register 0 A 
@@ -99,36 +105,39 @@ uint8_t receiveByte()
 	return UDR0;
 }
 
-void printByte(uint8_t number)
+/* Print Byte */
+void print_byte(uint8_t number)
 {
 	/* We add '0' to make it an ASCII character */
 	
 	// Hundreds
-	transmitByte('0' + (number / 100));
+	tx_byte('0' + (number / 100));
 	
 	// Tens
-	transmitByte('0' + ((number / 10) % 10));
+	tx_byte('0' + ((number / 10) % 10));
 	
 	// Units
-	transmitByte('0' + (number % 10));
+	tx_byte('0' + (number % 10));
 }
 
-void putString(const char *str)
+/* Put String */
+void put_string(const char *str)
 {
 	for(uint8_t i = 0; *(str + i) != '\0'; i++)
-		transmitByte(*(str + i));
+		tx_byte(*(str + i));
 }
 
-void getString (char *str, uint8_t size)
+/* Get String */
+void get_string(char *str, uint8_t size)
 {
 	uint8_t i = 0;
-	uint8_t c;
+	uint8_t key_num;
 	do
 	{
-		c = receiveByte();
-		if(c != 13) // If char is different from 'Enter'
+		key_num = rx_byte();
+		if(key_num != 13) // If key pressed is different from 'Enter'
 		{
-			*(str + i) = c;
+			*(str + i) = key_num;
 			i++;
 		}
 	} while (c != 13 && i < size);
@@ -136,15 +145,17 @@ void getString (char *str, uint8_t size)
 	*(str + i) = '\0';
 }
 
-void printNumber(uint16_t number)
+/* Print Number */
+void print_number(uint16_t number)
 {
 	char buffer[5];
 	// number, string, base
 	itoa(number, buffer, 10);
-	putString(buffer);
+	put_string(buffer);
 }
 
-void printLine()
+/* Print Line */
+void print_line()
 {
-	putString("\n");
+	put_string("\n");
 }
