@@ -4,7 +4,6 @@
  * Created: 6/16/2019 3:24:38 AM
  * Author: Miguel Osuna
  */ 
-
 #pragma once
 #ifndef _ADC_H_
 #define _ADC_H_

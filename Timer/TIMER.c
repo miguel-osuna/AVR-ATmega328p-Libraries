@@ -4,7 +4,6 @@
  * Created: 6/20/2019
  * Author: Miguel Osuna
  */ 
-
 #include "timer.h"
 
 /*

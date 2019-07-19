@@ -6,6 +6,12 @@
 
 #include "usart.h"
 
+/*
+ * //////////////////////////////////////////////////////////////////////////
+ *						USART Functions
+ * //////////////////////////////////////////////////////////////////////////
+ */ 
+
 /* Set USART Baud Prescaler */
 static inline void set_baud_prescaler(uint32_t cpu_speed, uint32_t baud_rate, uint8_t double_speed)
 {

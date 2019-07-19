@@ -4,7 +4,6 @@
  * Created: 6/20/2019
  * Author: Miguel Osuna
  */ 
-
 #pragma once
 #ifndef _TIMER_H_
 #define _TIMER_H_

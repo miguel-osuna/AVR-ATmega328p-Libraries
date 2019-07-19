@@ -4,7 +4,6 @@
  * Created: 6/15/2019
  * Author : Miguel Osuna
  */ 
-
 #ifndef F_CPU
 #define F_CPU 16000000UL
 #endif 
